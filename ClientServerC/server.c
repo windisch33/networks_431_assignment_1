@@ -28,10 +28,17 @@
 void *handle_request_t(void *socket)
 {
   char recv_buffer[MAX_BUFFER_SIZE] = {0};
-  if( recv(socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) {
+  int status;
+  if( (status = recv(socket, recv_buffer, sizeof recv_buffer, 0)) == -1 ) {
     die("server - recv()");
   }
-  // reverse(recv_buffer, sizeof recv_buffer);
+
+  if( status == 0 ) {
+    // client has closed the connection
+    pthread_exit(NULL);
+  }
+
+  reverse(recv_buffer, sizeof recv_buffer);
   if( send(socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) {
     die("server - send()");
   }
