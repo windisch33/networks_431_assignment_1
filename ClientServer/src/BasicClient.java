@@ -29,9 +29,16 @@ public class BasicClient
 		PrintWriter out = new PrintWriter(connect.getOutputStream(), true);
 
 
-		out.println("Hello server this is the client");
-		out.println("0123456789");
-
+		//send messages to server
+		for (int i = 0; i < 2; i++)
+		{
+			out.println("HI SERVERS");
+			out.println("0123456789");
+			out.println("ABCDEFGHIJ");
+			out.println("KLMNOPQRST");
+			out.println("UVWXYZ");
+		}
+		
 		String msg = scan.nextLine();
 		System.out.println(msg);
 
