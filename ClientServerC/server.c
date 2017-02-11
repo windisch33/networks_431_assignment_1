@@ -15,35 +15,51 @@
 #include <time.h> 
 #include <pthread.h>
 
-#define BUFFER_SIZE 1024
+#define MAX_BUFFER_SIZE 10
 #define PORT 4446
 #define BACKLOG 10
 
 /**
  * Client request handler.
+ *
+ * params:
+ *  socket - the socket interface to the client connection
  */
 void *handle_request_t(void *socket)
 {
-    time_t ticks = time(NULL);
-    snprintf(send_buffer, sizeof(send_buffer), "%.24s\r\n", ctime(&ticks));
-    printf("strlen(send): %ld\n",strlen(send_buffer));
-    if( send(connection_socket,send_buffer,strlen(send_buffer),0) == -1 ) 
-	{
-		die("server - send()");
-	} 
+  char recv_buffer[MAX_BUFFER_SIZE] = {0};
+  if( recv(socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) {
+    die("server - recv()");
+  }
+  // reverse(recv_buffer, sizeof recv_buffer);
+  if( send(socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) {
+    die("server - send()");
+  }
+}
 
-    int message_len = 0;
-    if( (message_len = recv(connection_socket, receive_buffer, sizeof(receive_buffer)-1, 0)) == -1 )
-	{
-        die("server - recv()");
-	}
-
-    printf("Message(server): %s*\n",receive_buffer);
-    close(connection_socket);
+/**
+ * Reverse the characters in the buffer.
+ *
+ * params:
+ *   buffer - an array of characters
+ *   len - the length of the array
+ */
+void reverse(char *buffer, size_t len) 
+{
+  size_t i, j;
+  int temp = 0;
+  for( i = 0; j = len - 1; i < j; ++i, --j ) {
+    temp = buffer[i];
+    buffer[i] = buffer[j];
+    buffer[j] = temp;
+  } 
 }
 
 /**
  * Print the error and quit.
+ *
+ * params:
+ *  s - a string describing error / exception / problem
  */
 void die(char* s)
 {
