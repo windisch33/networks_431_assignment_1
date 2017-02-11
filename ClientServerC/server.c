@@ -13,14 +13,38 @@
 #include <string.h>
 #include <sys/types.h>
 #include <time.h> 
+#include <pthread.h>
 
 #define BUFFER_SIZE 1024
 #define PORT 4446
 #define BACKLOG 10
 
 /**
- Print the error and quit.
-*/
+ * Client request handler.
+ */
+void *handle_request_t(void *socket)
+{
+    time_t ticks = time(NULL);
+    snprintf(send_buffer, sizeof(send_buffer), "%.24s\r\n", ctime(&ticks));
+    printf("strlen(send): %ld\n",strlen(send_buffer));
+    if( send(connection_socket,send_buffer,strlen(send_buffer),0) == -1 ) 
+	{
+		die("server - send()");
+	} 
+
+    int message_len = 0;
+    if( (message_len = recv(connection_socket, receive_buffer, sizeof(receive_buffer)-1, 0)) == -1 )
+	{
+        die("server - recv()");
+	}
+
+    printf("Message(server): %s*\n",receive_buffer);
+    close(connection_socket);
+}
+
+/**
+ * Print the error and quit.
+ */
 void die(char* s)
 {
     perror(s);
@@ -62,28 +86,17 @@ int main(int argc, char *argv[])
 
     while(1)
     {
+        // accept request and create new thread to service that request
         int client_len = sizeof client_info;
         int connection_socket = accept(server_socket, (struct sockaddr*)&client_info, 
-		(socklen_t*)&client_len); 
+            (socklen_t*)&client_len); 
 
-		time_t ticks = time(NULL);
-        snprintf(send_buffer, sizeof(send_buffer), "%.24s\r\n", ctime(&ticks));
-        printf("strlen(send): %ld\n",strlen(send_buffer));
-        if( send(connection_socket,send_buffer,strlen(send_buffer),0) == -1 ) 
-		{
-			// maybe we shouldn't terminate the process here
-			die("server - send()");
-		} 
-
-        int message_len = 0;
-        if( (message_len = recv(connection_socket, receive_buffer, sizeof(receive_buffer)-1, 0)) == -1 )
-		{
-			// same here
-        	die("server - recv()");
-		}
-
-        printf("Message(server): %s*\n",receive_buffer);
-        close(connection_socket);
+        pthread_t thread;
+        int status = 0;
+        if( (status = pthread_create(thread, NULL, handle_request_t, (void *)connection_socket)) != 0 ) {
+          fprintf(stderr, "server - error creating thread! error code = %d\n", status);
+          exit(1);
+        }
      }
 
 	return EXIT_SUCCESS;
