@@ -4,16 +4,23 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-
+/**
+ * 
+ * @author Robert WIndisch and Nick Martinez
+ * 
+ * Client to create a connection with server
+ * Sends messages to be reversed
+ *
+ */
 public class BasicClient
 {
 	public static void main(String[] args) throws UnknownHostException, IOException
 	{
 		System.out.println("Client is running");
 
+		//Create connection with server
 		Socket connect;
-		connect = new Socket("127.0.0.1",2333);
-		//connect = new Socket("localhost",2333);
+		connect = new Socket("127.0.0.1",4446);
 
 		// Read incoming Info.
 		Scanner scan = new Scanner(connect.getInputStream());
@@ -23,13 +30,13 @@ public class BasicClient
 
 
 		out.println("Hello server this is the client");
-		out.println("1 2 3 4 5 6 7 8 9");
-		out.flush();
+		out.println("0123456789");
 
 		String msg = scan.nextLine();
 		System.out.println(msg);
 
-        while(msg != null)
+		//Read messages coming back form server and print them
+        while(msg != "")
         {
 
         	try
@@ -44,8 +51,12 @@ public class BasicClient
         	System.out.println(msg);
 
         }
-
-		connect.close();
+        
+        System.out.println("CLIENT DONE");
+        scan.close();
+        connect.close();
+      
+		
 	}
 
 }
