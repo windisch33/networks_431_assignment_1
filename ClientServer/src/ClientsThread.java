@@ -8,7 +8,7 @@ import java.util.Scanner;
  * 
  * @author Robert WIndisch and Nick Martinez
  * 
- *         creates a runnable connection for each client connected to the server
+ *creates a runnable connection for each client connected to the server
  *
  */
 public class ClientsThread implements Runnable {
@@ -51,12 +51,10 @@ public class ClientsThread implements Runnable {
 			e1.printStackTrace();
 		}
 		
-		// read incoming message and reverse it
 		String msg;
-		//String msg = scan.nextLine();
-		//out.println(reverse(msg));
+	
 
-		while (scan.hasNextLine()) {
+		for (int i = 0; i < 10; i++) {
 			try {
 				msg = scan.nextLine();
 			} catch (NoSuchElementException e) {
@@ -67,7 +65,6 @@ public class ClientsThread implements Runnable {
 
 		}
 
-		out.println("SERVER END");
 		scan.close();
 		
 		try {

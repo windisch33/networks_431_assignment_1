@@ -39,11 +39,11 @@ public class BasicClient
 			out.println("UVWXYZ");
 		}
 		
-		String msg = scan.nextLine();
-		System.out.println(msg);
+		String msg;
+	
 
 		//Read messages coming back form server and print them
-        while(msg != "")
+        for(int i = 0; i < 10; i++)
         {
 
         	try
