@@ -1,69 +1,56 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 /**
- * 
- * @author Robert WIndisch and Nick Martinez
- * 
  * Client to create a connection with server
  * Sends messages to be reversed
+ *
+ * @author Robert Windisch and Nick Martinez
  *
  */
 public class BasicClient
 {
-	public static void main(String[] args) throws UnknownHostException, IOException
+	private static final int NUM_MESSAGES = 10;
+	private static final int MESSAGE_LEN = 10;
+
+	public static void main(String[] args) throws IOException
 	{
 		System.out.println("Client is running");
 
-		//Create connection with server
-		Socket connect;
-		connect = new Socket("127.0.0.1",4446);
+		// Create connection with server
+		Socket connect = new Socket("127.0.0.1", 4446);
 
-		// Read incoming Info.
-		Scanner scan = new Scanner(connect.getInputStream());
+		// DataInputStream for reading bytes in
+		DataInputStream dis = new DataInputStream(connect.getInputStream());
 
-		// Send messages out.
-		PrintWriter out = new PrintWriter(connect.getOutputStream(), true);
+		// DataOutputStream for writing ASCII bytes out
+		DataOutputStream dos = new DataOutputStream(connect.getOutputStream());
 
-
-		//send messages to server
-		for (int i = 0; i < 2; i++)
-		{
-			out.println("HI SERVERS");
-			out.println("0123456789");
-			out.println("ABCDEFGHIJ");
-			out.println("KLMNOPQRST");
-			out.println("UVWXYZ");
-		}
-		
-		String msg;
-	
-
-		//Read messages coming back form server and print them
-        for(int i = 0; i < 10; i++)
+		byte[] outMessage = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'};
+		byte[] inMessage = new byte[MESSAGE_LEN];
+		// read messages coming back from server and print them
+        for(int i = 0; i < NUM_MESSAGES; i++)
         {
-
         	try
         	{
-        		msg = scan.nextLine();
+        		//System.out.println(outMessage.getBytes("US-ASCII"));
+				dos.write(outMessage, 0, MESSAGE_LEN);
+        		dis.read(inMessage, 0, MESSAGE_LEN);
         	}catch (NoSuchElementException e)
         	{
         		connect.close();
         		break;
         	}
-
-        	System.out.println(msg);
-
+        	System.out.println(new String(inMessage, "US-ASCII"));
         }
         
         System.out.println("CLIENT DONE");
-        scan.close();
         connect.close();
-      
-		
 	}
-
 }
