@@ -58,18 +58,22 @@ int main(int argc, char *argv[])
     size_t i;
     char send_buffer[MAX_BUFFER_SIZE] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
     char receive_buffer[MAX_BUFFER_SIZE] = {0};
-    for( i = 0; i < NUM_MESSAGES; ++i ) {
+    for( i = 0; i < NUM_MESSAGES; ++i ) 
+    {
       printf("sending...\n");
-      if( send(server_socket, send_buffer, sizeof send_buffer, 0) == -1 ) {
+      if( send(server_socket, send_buffer, sizeof send_buffer, 0) == -1 ) 
+      {
         diep("client - send()");
       }
 
-      if( recv(server_socket, receive_buffer, sizeof receive_buffer, 0) == -1 ) {
+      if( recv(server_socket, receive_buffer, sizeof receive_buffer, 0) == -1 ) 
+      {
         diep("client - recv()");
       }
 
       int j;
-      for( j = 0; j < MAX_BUFFER_SIZE; ++j ) {
+      for( j = 0; j < MAX_BUFFER_SIZE; ++j ) 
+      {
         printf("%c ", receive_buffer[j]);
       }
       printf("\n");

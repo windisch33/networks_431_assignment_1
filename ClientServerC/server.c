@@ -31,21 +31,25 @@ void reverse(char *buffer, size_t len);
  */
 void *handle_request_t(void *socket)
 {
-  while( 1 ) {
+  while( 1 ) 
+  {
     char recv_buffer[MAX_BUFFER_SIZE] = {0};
     int status;
     int client_socket = *((int*) socket);
-    if( (status = recv(client_socket, recv_buffer, sizeof recv_buffer, 0)) == -1 ) {
+    if( (status = recv(client_socket, recv_buffer, sizeof recv_buffer, 0)) == -1 ) 
+    {
       diep("server - recv()");
     }
 
-    if( status == 0 ) {
+    if( status == 0 ) 
+    {
       // client has closed the connection
       pthread_exit(NULL);
     }
 
     reverse(recv_buffer, sizeof recv_buffer);
-    if( send(client_socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) {
+    if( send(client_socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) 
+    {
       diep("server - send()");
     }
   }
@@ -62,7 +66,8 @@ void reverse(char *buffer, size_t len)
 {
   size_t i, j;
   int temp = 0;
-  for( i = 0, j = len - 1; i < j; ++i, --j ) {
+  for( i = 0, j = len - 1; i < j; ++i, --j ) 
+  {
     temp = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = temp;
@@ -122,7 +127,8 @@ int main(int argc, char *argv[])
         printf("accepted\n");
         pthread_t thread;
         int status = 0;
-        if( (status = pthread_create(&thread, NULL, handle_request_t, (void *)&connection_socket)) != 0 ) {
+        if( (status = pthread_create(&thread, NULL, handle_request_t, (void *)&connection_socket)) != 0 ) 
+        {
           fprintf(stderr, "server - error creating thread! error code = %d\n", status);
           exit(1);
         }
