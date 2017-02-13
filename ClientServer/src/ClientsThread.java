@@ -1,8 +1,8 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 /**
  * 
@@ -14,6 +14,8 @@ import java.util.Scanner;
 public class ClientsThread implements Runnable {
 
 	Socket clientConnection;
+	private static final int MESSAGE_LEN = 10;
+	private static final int NUM_MESSAGES = 10;
 
 	/**
 	 * creates the client connection
@@ -30,42 +32,50 @@ public class ClientsThread implements Runnable {
 	 * handling of incoming messages
 	 */
 	@Override
-	public void run() {
+	public void run(){
 		// TODO Auto-generated method stub
 
-		// To Read incoming Info.
-		Scanner scan = null;
+
+		// DataInputStream for reading bytes in
+		DataInputStream dis = null;
 		try {
-			scan = new Scanner(clientConnection.getInputStream());
-		} catch (IOException e1) {
+			dis = new DataInputStream(clientConnection.getInputStream());
+		} catch (IOException e2) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e2.printStackTrace();
 		}
 
-		// To Send messages out.
-		PrintWriter out = null;
+		// DataOutputStream for writing ASCII bytes out
+		DataOutputStream dos = null;
 		try {
-			out = new PrintWriter(clientConnection.getOutputStream(), true);
-		} catch (IOException e1) {
+			dos = new DataOutputStream(clientConnection.getOutputStream());
+		} catch (IOException e2) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e2.printStackTrace();
 		}
 		
-		String msg;
 	
-
-		for (int i = 0; i < 10; i++) {
-			try {
-				msg = scan.nextLine();
-			} catch (NoSuchElementException e) {
-				break;
+		
+		byte[] inMessage = new byte[MESSAGE_LEN];
+	
+		//Read message from client and send to reverse method
+		for (int i = 0; i < NUM_MESSAGES; i++) {
+    		try {
+				dis.read(inMessage, 0, MESSAGE_LEN);
+				System.out.println(new String(inMessage, "US-ASCII"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-
-			out.println(reverse(msg));
-
+    		try {
+				dos.write(reverse(inMessage), 0, MESSAGE_LEN);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
-		scan.close();
+		
 		
 		try {
 			clientConnection.close();
@@ -79,19 +89,21 @@ public class ClientsThread implements Runnable {
 	/**
 	 * Takes a string and reverses it
 	 * 
-	 * @param msg
+	 * @param inMessage
 	 *            to reverse
 	 * @return reversed message
+	 * @throws UnsupportedEncodingException 
 	 */
-	private static String reverse(String msg) {
+	private static byte[] reverse(byte[] inMessage) throws UnsupportedEncodingException {
 
-		String newMsg = "";
-
-		for (int i = 0; i < msg.length(); i++) {
-			newMsg = newMsg + msg.charAt(((msg.length() - 1) - i));
-
-		}
-
+		byte[] newMsg = new byte[MESSAGE_LEN];
+		
+		System.out.println(new String(inMessage, "US-ASCII"));
+		  for( int i = 0, j = MESSAGE_LEN - 1; i < j; ++i, --j ) 
+		  {
+		    newMsg[i] = inMessage[j];
+		  } 
+		  System.out.println(new String(newMsg, "US-ASCII"));
 		return newMsg;
 
 	}

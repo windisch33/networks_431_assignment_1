@@ -18,14 +18,14 @@ public class BasicServer extends Thread
 	 */
 	public static void main(String[] args) throws IOException
 	{
-		System.out.println("Server is running");
+		System.out.println("JAVA Server is running");
 
 		//Create sockets
 		@SuppressWarnings("resource")
 		ServerSocket server = new ServerSocket(4446);
 		Socket connect;
 
-		//listen for multiple clients
+		//Listen for multiple clients
 		while(true)
 		{
 			connect = server.accept();

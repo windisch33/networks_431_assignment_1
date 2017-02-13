@@ -1,12 +1,9 @@
 import java.io.DataInputStream;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 /**
  * Client to create a connection with server
  * Sends messages to be reversed
@@ -21,7 +18,7 @@ public class BasicClient
 
 	public static void main(String[] args) throws IOException
 	{
-		System.out.println("Client is running");
+		System.out.println("JAVA Client is running");
 
 		// Create connection with server
 		Socket connect = new Socket("127.0.0.1", 4446);
@@ -32,6 +29,7 @@ public class BasicClient
 		// DataOutputStream for writing ASCII bytes out
 		DataOutputStream dos = new DataOutputStream(connect.getOutputStream());
 
+		
 		byte[] outMessage = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'};
 		byte[] inMessage = new byte[MESSAGE_LEN];
 		// read messages coming back from server and print them
@@ -50,7 +48,7 @@ public class BasicClient
         	System.out.println(new String(inMessage, "US-ASCII"));
         }
         
-        System.out.println("CLIENT DONE");
+        System.out.println("JAVA client done");
         connect.close();
 	}
 }
