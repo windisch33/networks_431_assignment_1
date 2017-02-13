@@ -1,7 +1,6 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
 /**
@@ -41,8 +40,7 @@ public class ClientsThread implements Runnable {
 		try {
 			dis = new DataInputStream(clientConnection.getInputStream());
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+			System.out.println("Error creating dis");
 		}
 
 		// DataOutputStream for writing ASCII bytes out
@@ -50,8 +48,8 @@ public class ClientsThread implements Runnable {
 		try {
 			dos = new DataOutputStream(clientConnection.getOutputStream());
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+			System.out.println("Error creating dos");
+		
 		}
 		
 	
@@ -62,16 +60,13 @@ public class ClientsThread implements Runnable {
 		for (int i = 0; i < NUM_MESSAGES; i++) {
     		try {
 				dis.read(inMessage, 0, MESSAGE_LEN);
-				System.out.println(new String(inMessage, "US-ASCII"));
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("Error reading message");
 			}
     		try {
 				dos.write(reverse(inMessage), 0, MESSAGE_LEN);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Error writing message");
 			}
 		}
 
@@ -80,30 +75,27 @@ public class ClientsThread implements Runnable {
 		try {
 			clientConnection.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error closing server");
 		}
 
 	}
 
 	/**
-	 * Takes a string and reverses it
+	 * Takes a message and reverses it
 	 * 
 	 * @param inMessage
 	 *            to reverse
 	 * @return reversed message
-	 * @throws UnsupportedEncodingException 
 	 */
-	private static byte[] reverse(byte[] inMessage) throws UnsupportedEncodingException {
+	private static byte[] reverse(byte[] inMessage){
 
 		byte[] newMsg = new byte[MESSAGE_LEN];
 		
-		System.out.println(new String(inMessage, "US-ASCII"));
-		  for( int i = 0, j = MESSAGE_LEN - 1; i < j; ++i, --j ) 
+		  for( int i = 0, j = MESSAGE_LEN - 1; i < MESSAGE_LEN; ++i, --j ) 
 		  {
 		    newMsg[i] = inMessage[j];
 		  } 
-		  System.out.println(new String(newMsg, "US-ASCII"));
+		 
 		return newMsg;
 
 	}
