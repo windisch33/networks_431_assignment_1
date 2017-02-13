@@ -25,7 +25,7 @@
  * params:
  *  s - a string describing error / exception / problem
  */
-void die(char* s)
+void diep(char* s)
 {
     perror(s);
     exit(1);
@@ -37,11 +37,9 @@ int main(int argc, char *argv[])
 
     struct sockaddr_in server_info;
 
-//    char receive_buffer[MAX_BUFFER_SIZE] = {0};
-
     if( (server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
 	{	
-        die("client - socket()");
+        diep("client - socket()");
 	}
 
     memset(&server_info, 0, sizeof(server_info));
@@ -53,23 +51,26 @@ int main(int argc, char *argv[])
     // establish connection with server
     if( connect(server_socket, (struct sockaddr*)&server_info, sizeof(server_info)) == -1 )
 	{
-        die("client - connect()"); 
+        diep("client - connect()"); 
 	}
 
     // send 10 messages to be processed by server
     size_t i;
+    char send_buffer[MAX_BUFFER_SIZE] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+    char receive_buffer[MAX_BUFFER_SIZE] = {0};
     for( i = 0; i < NUM_MESSAGES; ++i ) {
-      char send_buffer[MAX_BUFFER_SIZE] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+      printf("sending...\n");
       if( send(server_socket, send_buffer, sizeof send_buffer, 0) == -1 ) {
-        die("client - send()");
+        diep("client - send()");
       }
 
-      if( recv(server_socket, send_buffer, sizeof send_buffer, 0) == -1 ) {
-        die("client - recv()");
+      if( recv(server_socket, receive_buffer, sizeof receive_buffer, 0) == -1 ) {
+        diep("client - recv()");
       }
 
-      for( i = 0; i < MAX_BUFFER_SIZE; ++i ) {
-        printf("%c ", send_buffer[i]);
+      int j;
+      for( j = 0; j < MAX_BUFFER_SIZE; ++j ) {
+        printf("%c ", receive_buffer[j]);
       }
       printf("\n");
     }

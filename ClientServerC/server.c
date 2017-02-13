@@ -31,24 +31,24 @@ void reverse(char *buffer, size_t len);
  */
 void *handle_request_t(void *socket)
 {
-  char recv_buffer[MAX_BUFFER_SIZE] = {0};
-  int status;
-  int client_socket = *((int*) socket);
-  if( (status = recv(client_socket, recv_buffer, sizeof recv_buffer, 0)) == -1 ) {
-    diep("server - recv()");
-  }
+  while( 1 ) {
+    char recv_buffer[MAX_BUFFER_SIZE] = {0};
+    int status;
+    int client_socket = *((int*) socket);
+    if( (status = recv(client_socket, recv_buffer, sizeof recv_buffer, 0)) == -1 ) {
+      diep("server - recv()");
+    }
 
-  if( status == 0 ) {
-    // client has closed the connection
-    pthread_exit(NULL);
-  }
+    if( status == 0 ) {
+      // client has closed the connection
+      pthread_exit(NULL);
+    }
 
-  reverse(recv_buffer, sizeof recv_buffer);
-  if( send(client_socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) {
-    diep("server - send()");
+    reverse(recv_buffer, sizeof recv_buffer);
+    if( send(client_socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) {
+      diep("server - send()");
+    }
   }
-
-  pthread_exit(NULL);
 }
 
 /**
@@ -111,6 +111,7 @@ int main(int argc, char *argv[])
 		diep("server - listen()");
 	}
 
+    printf("server is listening...\n");
     while(1)
     {
         // accept request and create new thread to service that request
@@ -118,6 +119,7 @@ int main(int argc, char *argv[])
         int connection_socket = accept(server_socket, (struct sockaddr*)&client_info, 
             (socklen_t*)&client_len); 
 
+        printf("accepted\n");
         pthread_t thread;
         int status = 0;
         if( (status = pthread_create(&thread, NULL, handle_request_t, (void *)&connection_socket)) != 0 ) {
