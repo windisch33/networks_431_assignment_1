@@ -2,10 +2,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 /**
- * 
+ *
+ * Listens for incoming connections
+ *
  * @author Robert WIndisch and Nick Martinez
- * 
- * listens for incoming connections 
  *
  */
 public class BasicServer extends Thread
