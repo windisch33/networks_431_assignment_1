@@ -14,7 +14,7 @@
 #include <sys/types.h>
 #include <time.h> 
 
-#define BUFFER_SIZE 10
+#define MAX_BUFFER_SIZE 10
 #define PORT 4446
 #define SERVER_ADDR "127.0.0.1"
 #define NUM_MESSAGES 10
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
     struct sockaddr_in server_info;
 
-    char receive_buffer[BUFFER_SIZE] = {0};
+//    char receive_buffer[MAX_BUFFER_SIZE] = {0};
 
     if( (server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
 	{	
@@ -59,16 +59,16 @@ int main(int argc, char *argv[])
     // send 10 messages to be processed by server
     size_t i;
     for( i = 0; i < NUM_MESSAGES; ++i ) {
-      char send_buffer[BUFFER_SIZE] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+      char send_buffer[MAX_BUFFER_SIZE] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
       if( send(server_socket, send_buffer, sizeof send_buffer, 0) == -1 ) {
         die("client - send()");
       }
 
-      if( recv(server_socket, send_buffer, sizeof send_buffer, 0) == =1 ) {
+      if( recv(server_socket, send_buffer, sizeof send_buffer, 0) == -1 ) {
         die("client - recv()");
       }
 
-      for( i = 0; i < BUFFER_SIZE; ++i ) {
+      for( i = 0; i < MAX_BUFFER_SIZE; ++i ) {
         printf("%c ", send_buffer[i]);
       }
       printf("\n");

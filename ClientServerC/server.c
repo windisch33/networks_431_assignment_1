@@ -19,6 +19,10 @@
 #define PORT 4446
 #define BACKLOG 10
 
+void diep(char* s);
+void *handle_request_t(void *socket);
+void reverse(char *buffer, size_t len);
+
 /**
  * Client request handler.
  *
@@ -29,8 +33,9 @@ void *handle_request_t(void *socket)
 {
   char recv_buffer[MAX_BUFFER_SIZE] = {0};
   int status;
-  if( (status = recv(socket, recv_buffer, sizeof recv_buffer, 0)) == -1 ) {
-    die("server - recv()");
+  int client_socket = *((int*) socket);
+  if( (status = recv(client_socket, recv_buffer, sizeof recv_buffer, 0)) == -1 ) {
+    diep("server - recv()");
   }
 
   if( status == 0 ) {
@@ -39,9 +44,11 @@ void *handle_request_t(void *socket)
   }
 
   reverse(recv_buffer, sizeof recv_buffer);
-  if( send(socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) {
-    die("server - send()");
+  if( send(client_socket, recv_buffer, sizeof recv_buffer, 0) == -1 ) {
+    diep("server - send()");
   }
+
+  pthread_exit(NULL);
 }
 
 /**
@@ -55,7 +62,7 @@ void reverse(char *buffer, size_t len)
 {
   size_t i, j;
   int temp = 0;
-  for( i = 0; j = len - 1; i < j; ++i, --j ) {
+  for( i = 0, j = len - 1; i < j; ++i, --j ) {
     temp = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = temp;
@@ -68,7 +75,7 @@ void reverse(char *buffer, size_t len)
  * params:
  *  s - a string describing error / exception / problem
  */
-void die(char* s)
+void diep(char* s)
 {
     perror(s);
     exit(1);
@@ -81,13 +88,10 @@ int main(int argc, char *argv[])
     struct sockaddr_in server_info;
     struct sockaddr_in client_info; 
 
-    char send_buffer[BUFFER_SIZE] = {0};
-    char receive_buffer[BUFFER_SIZE] = {0};
-
 	// obtain a socket for the server
     if( (server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
 	{
-        die("server - socket()");
+        diep("server - socket()");
 	}
 
     memset(&server_info, 0, sizeof server_info);
@@ -98,13 +102,13 @@ int main(int argc, char *argv[])
 	// bind the server to port
     if( bind(server_socket, (struct sockaddr*)&server_info, sizeof server_info) == -1 ) 
 	{
-		die("server - bind()");
+		diep("server - bind()");
 	} 
 
 	// listen for incoming connections
     if( listen(server_socket, BACKLOG) == -1 ) 
 	{
-		die("server - listen()");
+		diep("server - listen()");
 	}
 
     while(1)
@@ -116,7 +120,7 @@ int main(int argc, char *argv[])
 
         pthread_t thread;
         int status = 0;
-        if( (status = pthread_create(thread, NULL, handle_request_t, (void *)connection_socket)) != 0 ) {
+        if( (status = pthread_create(&thread, NULL, handle_request_t, (void *)&connection_socket)) != 0 ) {
           fprintf(stderr, "server - error creating thread! error code = %d\n", status);
           exit(1);
         }
