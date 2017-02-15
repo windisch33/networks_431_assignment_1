@@ -58,9 +58,17 @@ int main(int argc, char *argv[])
     size_t i;
     char send_buffer[MAX_BUFFER_SIZE] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
     char receive_buffer[MAX_BUFFER_SIZE] = {0};
+    printf("C client is running...\n");
     for( i = 0; i < NUM_MESSAGES; ++i ) 
     {
-      printf("sending...\n");
+      size_t j;
+      printf("Sent - ");
+      for( j = 0; j < MAX_BUFFER_SIZE; ++j ) 
+      {
+        printf("%c", send_buffer[j]);
+      }
+      printf("\n");
+
       if( send(server_socket, send_buffer, sizeof send_buffer, 0) == -1 ) 
       {
         diep("client - send()");
@@ -71,13 +79,14 @@ int main(int argc, char *argv[])
         diep("client - recv()");
       }
 
-      int j;
+      printf("Received - ");
       for( j = 0; j < MAX_BUFFER_SIZE; ++j ) 
       {
-        printf("%c ", receive_buffer[j]);
+        printf("%c", receive_buffer[j]);
       }
       printf("\n");
     }
+    printf("C client done\n");
     
     // close connection with server
     close(server_socket);

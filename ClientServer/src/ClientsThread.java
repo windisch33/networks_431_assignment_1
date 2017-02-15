@@ -13,7 +13,6 @@ public class ClientsThread implements Runnable
 {
 	private Socket clientConnection;
 	private static final int MESSAGE_LEN = 10;
-	private static final int NUM_MESSAGES = 10;
 
 	/**
 	 * Creates the client connection
@@ -52,25 +51,17 @@ public class ClientsThread implements Runnable
 			e2.printStackTrace();
 		}
 
-		// read message from client and send to reverse method
-		byte[] inMessage = new byte[MESSAGE_LEN];
-		for (int i = 0; i < NUM_MESSAGES; i++)
+		try
 		{
-			try
-			{
-				dis.read(inMessage, 0, MESSAGE_LEN);
-			} catch (IOException e1)
-			{
-				System.out.println("Error reading message");
-			}
-			try
+			byte[] inMessage = new byte[MESSAGE_LEN];
+			while (dis.read(inMessage, 0, MESSAGE_LEN) > 0)
 			{
 				dos.write(reverse(inMessage), 0, MESSAGE_LEN);
-			} catch (IOException e)
-			{
-				System.out.println("Error writing message");
-				e.printStackTrace();
 			}
+		} catch (IOException e )
+		{
+			System.out.println("server - read()");
+			e.printStackTrace();
 		}
 
 		try
