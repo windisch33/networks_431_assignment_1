@@ -1,11 +1,11 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 /**
+ * Listens for incoming connections.
  *
- * Listens for incoming connections
- *
- * @author Robert WIndisch and Nick Martinez
+ * @author Robert Windisch and Nick Martinez
  *
  */
 public class BasicServer extends Thread
@@ -13,19 +13,18 @@ public class BasicServer extends Thread
 	/**
 	 * listens for connections
 	 * if one is found sends it to thread to handle
-	 * @param args
-	 * @throws IOException
+	 * @param args - arguments
+	 * @throws IOException - if there is an issue creating the ServerSocket interface
 	 */
 	public static void main(String[] args) throws IOException
 	{
 		System.out.println("JAVA Server is running");
 
-		//Create sockets
-		@SuppressWarnings("resource")
+		// create sockets
 		ServerSocket server = new ServerSocket(4446);
 		Socket connect;
 
-		//Listen for multiple clients
+		// listen for multiple clients
 		while(true)
 		{
 			connect = server.accept();
@@ -33,6 +32,5 @@ public class BasicServer extends Thread
 			Thread thread = new Thread(newClient);
 			thread.start();
 		}
-
 	}
 }

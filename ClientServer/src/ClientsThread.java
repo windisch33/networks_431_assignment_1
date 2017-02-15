@@ -4,99 +4,98 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
+ * Creates a runnable connection for each client connected to the server.
  *
- *Creates a runnable connection for each client connected to the server
+ * @author Robert Windisch and Nick Martinez
  *
- * * @author Robert WIndisch and Nick Martinez
  */
-public class ClientsThread implements Runnable {
-
-	Socket clientConnection;
+public class ClientsThread implements Runnable
+{
+	private Socket clientConnection;
 	private static final int MESSAGE_LEN = 10;
 	private static final int NUM_MESSAGES = 10;
 
 	/**
 	 * Creates the client connection
-	 * @param connect
-	 * @throws IOException
+	 * @param connect - the socket interface
 	 */
-	public ClientsThread(Socket connect) throws IOException {
-
+	public ClientsThread(Socket connect)
+	{
 		clientConnection = connect;
 	}
 
 	/**
-	 * Runs the server reading and
-	 * handling of incoming messages
+	 * Runs the server reading and handling of incoming messages.
 	 */
 	@Override
-	public void run(){
-		// TODO Auto-generated method stub
-
-
+	public void run()
+	{
 		// DataInputStream for reading bytes in
 		DataInputStream dis = null;
-		try {
+		try
+		{
 			dis = new DataInputStream(clientConnection.getInputStream());
-		} catch (IOException e2) {
-			System.out.println("Error creating dis");
+		} catch (IOException e2)
+		{
+			System.out.println("Error creating DataInputStream");
+			e2.printStackTrace();
 		}
 
-		// DataOutputStream for writing ASCII bytes out
+		// DataOutputStream for writing bytes out
 		DataOutputStream dos = null;
-		try {
+		try
+		{
 			dos = new DataOutputStream(clientConnection.getOutputStream());
-		} catch (IOException e2) {
-			System.out.println("Error creating dos");
-
+		} catch (IOException e2)
+		{
+			System.out.println("Error creating DataOutputStream");
+			e2.printStackTrace();
 		}
 
-
-
+		// read message from client and send to reverse method
 		byte[] inMessage = new byte[MESSAGE_LEN];
-
-		//Read message from client and send to reverse method
-		for (int i = 0; i < NUM_MESSAGES; i++) {
-			try {
+		for (int i = 0; i < NUM_MESSAGES; i++)
+		{
+			try
+			{
 				dis.read(inMessage, 0, MESSAGE_LEN);
-			} catch (IOException e1) {
+			} catch (IOException e1)
+			{
 				System.out.println("Error reading message");
 			}
-			try {
+			try
+			{
 				dos.write(reverse(inMessage), 0, MESSAGE_LEN);
-			} catch (IOException e) {
+			} catch (IOException e)
+			{
 				System.out.println("Error writing message");
+				e.printStackTrace();
 			}
 		}
 
-
-
-		try {
+		try
+		{
 			clientConnection.close();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			System.out.println("Error closing server");
+			e.printStackTrace();
 		}
-
 	}
 
 	/**
-	 * Takes a message and reverses it
+	 * Takes a message and reverses it.
 	 *
-	 * @param inMessage
-	 *            to reverse
-	 * @return reversed message
+	 * @param inMessage - array of bytes to be reversed
+	 * @return reversed array of bytes
 	 */
-	private static byte[] reverse(byte[] inMessage){
-
+	private static byte[] reverse(byte[] inMessage)
+	{
 		byte[] newMsg = new byte[MESSAGE_LEN];
-
 		for( int i = 0, j = MESSAGE_LEN - 1; i < MESSAGE_LEN; ++i, --j )
 		{
 			newMsg[i] = inMessage[j];
 		}
-
 		return newMsg;
-
 	}
-
 }

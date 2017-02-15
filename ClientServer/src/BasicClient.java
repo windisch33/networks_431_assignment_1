@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.NoSuchElementException;
+
 /**
  * Client to create a connection with server
  * Sends messages to be reversed
@@ -20,7 +21,7 @@ public class BasicClient
 	{
 		System.out.println("JAVA Client is running");
 
-		// Create connection with server
+		// create connection with server
 		Socket connect = new Socket("127.0.0.1", 4446);
 
 		// DataInputStream for reading bytes in
@@ -28,7 +29,6 @@ public class BasicClient
 
 		// DataOutputStream for writing ASCII bytes out
 		DataOutputStream dos = new DataOutputStream(connect.getOutputStream());
-
 		
 		byte[] outMessage = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'};
 		byte[] inMessage = new byte[MESSAGE_LEN];
